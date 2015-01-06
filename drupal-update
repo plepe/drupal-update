@@ -1,0 +1,15 @@
+#!/bin/bash
+
+mkdir /tmp/drupal-update
+cd /tmp/drupal-update
+
+VERSION=`wget -O- https://www.drupal.org/project/drupal | egrep '"/drupal-7\\..*-release-notes' | egrep -o '7\.[0-9]+' | cut -f1 -d" "`
+echo "Current Drupal version: $X"
+
+URL="http://ftp.drupal.org/files/projects/drupal-$VERSION.tar.gz"
+wget -O - $URL | tar xvfz - --strip-components=1
+
+lftp -e "mirror -R . --exclude=.htaccess --exclude=robots.txt public_html/;quit" -u user host
+
+cd
+rm -rf /tmp/drupal-update
