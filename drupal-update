@@ -1,8 +1,21 @@
 #!/bin/bash
 
-USER="user"
-HOST="host"
 TMPDIR="/tmp/drupal-update"
+SHPATH=`dirname $0`
+
+if [ "$1" == "" ] ; then
+  echo "drupal-update <config>"
+  exit 1
+fi
+
+CONFIG_STR=`grep -e "^$1:" ${SHPATH}/conf`
+if [ "${CONFIG_STR}" == "" ] ; then
+  echo "config not found"
+  exit 1
+fi
+
+USER=`echo ${CONFIG_STR} | cut -d: -f2`
+HOST=`echo ${CONFIG_STR} | cut -d: -f3`
 
 mkdir "$TMPDIR"
 cd "$TMPDIR"
@@ -12,6 +25,8 @@ echo "Current Drupal version: $X"
 
 URL="http://ftp.drupal.org/files/projects/drupal-$VERSION.tar.gz"
 wget -O - $URL | tar xvfz - --strip-components=1
+
+echo "Installing new version on ${USER}@${HOST}"
 
 lftp -e "mirror -R . --exclude=.htaccess --exclude=robots.txt public_html/;quit" -u "$USER" "$HOST"
 
