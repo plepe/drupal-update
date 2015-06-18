@@ -29,6 +29,10 @@ echo "New drupal version: $VERSION"
 
 URL="http://ftp.drupal.org/files/projects/drupal-$VERSION.tar.gz"
 wget -O - $URL | tar xvfz - --strip-components=1
+if [ "$?" != "0" ] ; then
+  echo "An error occured when downloading drupal archive!"
+  exit 1
+fi
 
 echo "Installing new version on ${USER}@${HOST}"
 
