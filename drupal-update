@@ -20,14 +20,15 @@ HOST=`echo ${CONFIG_STR} | cut -d: -f3`
 mkdir "$TMPDIR"
 cd "$TMPDIR"
 
-VERSION=`wget -O- https://www.drupal.org/project/drupal | egrep '"/drupal-7\\..*-release-notes' | egrep -o '7\.[0-9]+' | cut -f1 -d" "`
+FILE=`wget -O- http://drupal.org/project/drupal | egrep -o 'drupal-7\.[0-9]+.tar.gz'`
+VERSION=`echo ${FILE} | egrep -o '7\.[0-9]+'`
 if [ "$VERSION" == "" ] ; then
   echo "Could not parse drupal version!"
   exit 1
 fi
 echo "New drupal version: $VERSION"
 
-URL="http://ftp.drupal.org/files/projects/drupal-$VERSION.tar.gz"
+URL="http://ftp.drupal.org/files/projects/$FILE"
 wget -O - $URL | tar xvfz - --strip-components=1
 if [ "$?" != "0" ] ; then
   echo "An error occured when downloading drupal archive!"
