@@ -21,7 +21,11 @@ mkdir "$TMPDIR"
 cd "$TMPDIR"
 
 VERSION=`wget -O- https://www.drupal.org/project/drupal | egrep '"/drupal-7\\..*-release-notes' | egrep -o '7\.[0-9]+' | cut -f1 -d" "`
-echo "Current Drupal version: $X"
+if [ "$VERSION" == "" ] ; then
+  echo "Could not parse drupal version!"
+  exit 1
+fi
+echo "New drupal version: $VERSION"
 
 URL="http://ftp.drupal.org/files/projects/drupal-$VERSION.tar.gz"
 wget -O - $URL | tar xvfz - --strip-components=1
