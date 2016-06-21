@@ -20,7 +20,7 @@ HOST=`echo ${CONFIG_STR} | cut -d: -f3`
 mkdir "$TMPDIR"
 cd "$TMPDIR"
 
-VERSION=`wget -O- https://drupal.org/project/drupal | egrep -o 'drupal-7\.[0-9]+-release-notes'`
+VERSION=`wget -O- https://drupal.org/project/drupal | egrep -o '<h4>Drupal core 7\.[0-9]+'`
 VERSION=`echo ${VERSION} | egrep -o '7\.[0-9]+'`
 if [ "$VERSION" == "" ] ; then
   echo "Could not parse drupal version!"
