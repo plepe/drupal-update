@@ -1,0 +1,41 @@
+#!/bin/bash
+
+TMPDIR="/tmp/drupal-update"
+SHPATH=`dirname $0`
+
+if [ "$3" == "" ] ; then
+  echo "drupal-update <config> <module> <version>"
+  exit 1
+fi
+
+CONFIG_STR=`grep -e "^$1:" ${SHPATH}/conf`
+if [ "${CONFIG_STR}" == "" ] ; then
+  echo "config not found"
+  exit 1
+fi
+
+USER=`echo ${CONFIG_STR} | cut -d: -f2`
+HOST=`echo ${CONFIG_STR} | cut -d: -f3`
+DESTPATH=`echo ${CONFIG_STR} | cut -d: -f4`
+if [ "$DESTPATH" == "" ] ; then
+  DESTPATH="public_html/"
+fi
+MODULE=$2
+VERSION=$3
+
+mkdir "$TMPDIR"
+cd "$TMPDIR"
+
+URL="https://ftp.drupal.org/files/projects/${MODULE}-7.x-${VERSION}.tar.gz"
+wget -O - $URL | tar xvfz - --strip-components=1
+if [ "$?" != "0" ] ; then
+  echo "An error occured when downloading drupal archive!"
+  exit 1
+fi
+
+echo "Installing new module version on ${USER}@${HOST}"
+
+lftp -e "set ssl:verify-certificate no ; rm -r $DESTPATH/sites/all/modules/${MODULE} ; mkdir DESTPATH/sites/all/modules/${MODULE} ; mirror -R . $DESTPATH/sites/all/modules/${MODULE} ;quit" -u "$USER" "$HOST"
+
+cd
+rm -rf "$TMPDIR"
