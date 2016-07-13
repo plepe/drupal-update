@@ -42,7 +42,7 @@ fi
 
 echo "Installing new version on ${USER}@${HOST}"
 
-lftp -e "mirror -R . --exclude=.htaccess --exclude=robots.txt $DESTPATH;quit" -u "$USER" "$HOST"
+lftp -e "set ssl:verify-certificate no ; mirror -R . --exclude=.htaccess --exclude=robots.txt $DESTPATH;quit" -u "$USER" "$HOST"
 
 cd
 rm -rf "$TMPDIR"
