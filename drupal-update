@@ -16,6 +16,10 @@ fi
 
 USER=`echo ${CONFIG_STR} | cut -d: -f2`
 HOST=`echo ${CONFIG_STR} | cut -d: -f3`
+DESTPATH=`echo ${CONFIG_STR} | cut -d: -f4`
+if [ "$DESTPATH" == "" ] ; then
+  DESTPATH="public_html/"
+fi
 
 mkdir "$TMPDIR"
 cd "$TMPDIR"
@@ -38,7 +42,7 @@ fi
 
 echo "Installing new version on ${USER}@${HOST}"
 
-lftp -e "mirror -R . --exclude=.htaccess --exclude=robots.txt public_html/;quit" -u "$USER" "$HOST"
+lftp -e "mirror -R . --exclude=.htaccess --exclude=robots.txt $DESTPATH;quit" -u "$USER" "$HOST"
 
 cd
 rm -rf "$TMPDIR"
