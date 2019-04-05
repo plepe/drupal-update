@@ -3,8 +3,8 @@
 TMPDIR="/tmp/drupal-update"
 SHPATH=`dirname $0`
 
-if [ "$1" == "" ] ; then
-  echo "drupal-update <config>"
+if [ "$2" == "" ] ; then
+  echo "drupal-update <config> <version>"
   exit 1
 fi
 
@@ -21,18 +21,12 @@ if [ "$DESTPATH" == "" ] ; then
   DESTPATH="public_html/"
 fi
 
+VERSION=$2
+
 mkdir "$TMPDIR"
 cd "$TMPDIR"
 
-VERSION=`wget -O- https://drupal.org/project/drupal | egrep -o '<h4>Drupal core 7\.[0-9]+'`
-VERSION=`echo ${VERSION} | egrep -o '7\.[0-9]+'`
-if [ "$VERSION" == "" ] ; then
-  echo "Could not parse drupal version!"
-  exit 1
-fi
-echo "New drupal version: $VERSION"
 FILE="drupal-${VERSION}.tar.gz"
-
 URL="https://ftp.drupal.org/files/projects/$FILE"
 wget -O - $URL | tar xvfz - --strip-components=1
 if [ "$?" != "0" ] ; then
